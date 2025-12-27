@@ -1,0 +1,31 @@
+.code-editor {
+  flex: 1;
+  overflow: auto;
+  background-color: #1e1e1e;
+}
+
+.code-editor .cm-editor {
+  height: 100%;
+  font-size: 14px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+}
+
+.code-editor .cm-scroller {
+  overflow: auto;
+}
+
+.cm-diagnostic-highlight {
+  animation: flash-highlight 1s ease-out forwards;
+}
+
+@keyframes flash-highlight {
+  0% {
+    background-color: rgba(255, 200, 0, 0.5);
+  }
+  50% {
+    background-color: rgba(255, 200, 0, 0.3);
+  }
+  100% {
+    background-color: rgba(255, 200, 0, 0);
+  }
+}

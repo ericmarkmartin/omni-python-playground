@@ -1,0 +1,3 @@
+[submodule "ruff-source"]
+	path = ruff-source
+	url = https://github.com/astral-sh/ruff.git

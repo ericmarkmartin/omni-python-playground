@@ -1,0 +1,96 @@
+.diagnostics-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #1e1e1e;
+}
+
+.diagnostics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background-color: #2d2d30;
+  border-bottom: 1px solid #3e3e42;
+}
+
+.diagnostics-header h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #cccccc;
+}
+
+.diagnostics-count {
+  font-size: 0.875rem;
+  color: #858585;
+}
+
+.diagnostics-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.no-diagnostics {
+  padding: 2rem;
+  text-align: center;
+  color: #858585;
+  font-style: italic;
+}
+
+.checking-message {
+  padding: 2rem;
+  text-align: center;
+  color: #858585;
+  font-style: italic;
+}
+
+.checking-indicator {
+  color: #007acc;
+  font-style: italic;
+}
+
+.diagnostic {
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #252526;
+  border-left: 3px solid;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.diagnostic:hover {
+  background-color: #2a2d2e;
+}
+
+.diagnostic-error {
+  border-left-color: #f48771;
+}
+
+.diagnostic-warning {
+  border-left-color: #cca700;
+}
+
+.diagnostic-info {
+  border-left-color: #75beff;
+}
+
+.diagnostic-location {
+  font-size: 0.75rem;
+  color: #858585;
+  margin-bottom: 0.25rem;
+}
+
+.diagnostic-message {
+  font-size: 0.875rem;
+  color: #d4d4d4;
+  margin-bottom: 0.25rem;
+}
+
+.diagnostic-source {
+  font-size: 0.75rem;
+  color: #858585;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+}
