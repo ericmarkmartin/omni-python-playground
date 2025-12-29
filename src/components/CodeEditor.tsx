@@ -2,12 +2,19 @@ import CodeMirror from '@uiw/react-codemirror'
 import { python } from '@codemirror/lang-python'
 import { EditorView, Decoration } from '@codemirror/view'
 import { StateField, StateEffect } from '@codemirror/state'
-import { useRef, useImperativeHandle, forwardRef } from 'react'
+import { useRef, useImperativeHandle, forwardRef, useMemo, useState, useCallback } from 'react'
+import {
+  type LSPClient,
+  jumpToDefinition,
+  jumpToTypeDefinition,
+  findReferences
+} from '@codemirror/lsp-client'
 import './CodeEditor.css'
 
 interface CodeEditorProps {
   code: string
   onChange: (value: string) => void
+  lspClient?: LSPClient | null
 }
 
 export interface DiagnosticRange {
@@ -46,8 +53,73 @@ const highlightField = StateField.define({
   provide: f => EditorView.decorations.from(f)
 })
 
-const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(({ code, onChange }, ref) => {
+interface ContextMenuState {
+  visible: boolean
+  x: number
+  y: number
+}
+
+const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(({ code, onChange, lspClient }, ref) => {
   const editorRef = useRef<EditorView | null>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const [contextMenu, setContextMenu] = useState<ContextMenuState>({ visible: false, x: 0, y: 0 })
+
+  // Close context menu when clicking elsewhere
+  const handleClickOutside = useCallback(() => {
+    setContextMenu(prev => prev.visible ? { ...prev, visible: false } : prev)
+  }, [])
+
+  // Handle context menu
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    if (!lspClient) return // Only show LSP menu when LSP is available
+
+    e.preventDefault()
+    const container = containerRef.current
+    const view = editorRef.current
+    if (!container || !view) return
+
+    // Get the position in the document where the user right-clicked
+    const pos = view.posAtCoords({ x: e.clientX, y: e.clientY })
+    if (pos !== null) {
+      // Move the cursor to the clicked position
+      view.dispatch({
+        selection: { anchor: pos }
+      })
+    }
+
+    const rect = container.getBoundingClientRect()
+    setContextMenu({
+      visible: true,
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    })
+  }, [lspClient])
+
+  // Execute an LSP command
+  const executeCommand = useCallback((command: (view: EditorView) => boolean) => {
+    const view = editorRef.current
+    if (view) {
+      // Focus the view first, then execute the command
+      view.focus()
+      const result = command(view)
+      console.log('[LSP Command] Result:', result)
+    }
+    setContextMenu({ visible: false, x: 0, y: 0 })
+  }, [])
+
+  // Create extensions array with LSP support if client is available
+  const extensions = useMemo(() => {
+    const exts = [python(), highlightField]
+
+    if (lspClient) {
+      // Create plugin for the main.py document
+      // plugin() returns an Extension which can be an array
+      const lspExtensions = lspClient.plugin('file:///main.py', 'python') as any
+      exts.push(...lspExtensions)
+    }
+
+    return exts
+  }, [lspClient])
 
   useImperativeHandle(ref, () => ({
     jumpToLocation: (start: DiagnosticRange, end?: DiagnosticRange) => {
@@ -93,11 +165,16 @@ const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(({ code, onChan
   }))
 
   return (
-    <div className="code-editor">
+    <div
+      className="code-editor"
+      ref={containerRef}
+      onContextMenu={handleContextMenu}
+      onClick={handleClickOutside}
+    >
       <CodeMirror
         value={code}
         height="100%"
-        extensions={[python(), highlightField]}
+        extensions={extensions}
         onChange={onChange}
         theme="dark"
         onCreateEditor={(view) => {
@@ -127,6 +204,22 @@ const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(({ code, onChan
           lintKeymap: true,
         }}
       />
+      {contextMenu.visible && lspClient && (
+        <div
+          className="context-menu"
+          style={{ left: contextMenu.x, top: contextMenu.y }}
+        >
+          <button onClick={() => executeCommand(jumpToDefinition)}>
+            Go to Definition
+          </button>
+          <button onClick={() => executeCommand(jumpToTypeDefinition)}>
+            Go to Type Definition
+          </button>
+          <button onClick={() => executeCommand(findReferences)}>
+            Find References
+          </button>
+        </div>
+      )}
     </div>
   )
 })

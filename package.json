@@ -5,17 +5,19 @@
   "type": "module",
   "scripts": {
     "build:wasm": "wasm-pack build ruff-source/crates/ty_wasm --target web --out-dir ../../../ty_wasm",
-    "predev": "yarn build:wasm",
+    "build:wasm:check": "test -f ty_wasm/ty_wasm_bg.wasm || yarn build:wasm",
+    "predev": "yarn build:wasm:check",
     "dev": "vite",
-    "prebuild": "yarn build:wasm",
+    "prebuild": "yarn build:wasm:check",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint .",
     "preview": "vite preview",
-    "postinstall": "yarn build:wasm"
+    "postinstall": "yarn build:wasm:check"
   },
   "dependencies": {
     "@codemirror/lang-python": "^6.1.6",
+    "@codemirror/lsp-client": "^6.2.1",
     "@codemirror/state": "^6.5.3",
     "@codemirror/view": "^6.39.7",
     "@uiw/react-codemirror": "^4.23.0",
@@ -26,7 +28,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
-    "@types/react": "^19.2.5",
+    "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "eslint": "^9.39.1",
@@ -40,5 +42,10 @@
   "volta": {
     "node": "25.2.1",
     "yarn": "4.12.0"
+  },
+  "dependenciesMeta": {
+    "@codemirror/lsp-client@6.2.1": {
+      "unplugged": true
+    }
   }
 }

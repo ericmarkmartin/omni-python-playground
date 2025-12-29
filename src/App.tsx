@@ -4,6 +4,8 @@ import CodeEditor, { type CodeEditorHandle } from './components/CodeEditor'
 import DiagnosticsPanel from './components/DiagnosticsPanel'
 import Controls from './components/Controls'
 import { runTypeChecker } from './services/typecheckerService'
+import { createTyLSPClient, closeTyLSPClient } from './services/lsp/tyLSPService'
+import type { LSPClient } from '@codemirror/lsp-client'
 
 export type TypeChecker = 'pyright' | 'basedpyright' | 'ty' | 'pyrefly'
 export type PythonVersion = '3.9' | '3.10' | '3.11' | '3.12' | '3.13' | '3.14'
@@ -35,7 +37,41 @@ function App() {
   const [pythonVersion, setPythonVersion] = useState<PythonVersion>('3.12')
   const [diagnostics, setDiagnostics] = useState<Diagnostic[]>([])
   const [isChecking, setIsChecking] = useState(false)
+  const [lspClient, setLspClient] = useState<LSPClient | null>(null)
   const editorRef = useRef<CodeEditorHandle>(null)
+
+  // Initialize LSP client for ty
+  useEffect(() => {
+    if (typeChecker === 'ty') {
+      let cancelled = false
+
+      const initLSP = async () => {
+        try {
+          const client = await createTyLSPClient({
+            pythonVersion,
+            documentUri: 'file:///main.py'
+          })
+
+          if (!cancelled) {
+            setLspClient(client)
+          }
+        } catch (error) {
+          console.error('Failed to initialize LSP client:', error)
+        }
+      }
+
+      initLSP()
+
+      return () => {
+        cancelled = true
+        closeTyLSPClient()
+        setLspClient(null)
+      }
+    } else {
+      // For other type checkers, no LSP client yet
+      setLspClient(null)
+    }
+  }, [typeChecker, pythonVersion])
 
   // Run type checker whenever code, typeChecker, or pythonVersion changes
   useEffect(() => {
@@ -85,7 +121,7 @@ function App() {
             onTypeCheckerChange={setTypeChecker}
             onPythonVersionChange={setPythonVersion}
           />
-          <CodeEditor ref={editorRef} code={code} onChange={setCode} />
+          <CodeEditor ref={editorRef} code={code} onChange={setCode} lspClient={lspClient} />
         </div>
         <div className="diagnostics-section">
           <DiagnosticsPanel

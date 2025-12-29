@@ -2,6 +2,7 @@
   flex: 1;
   overflow: auto;
   background-color: #1e1e1e;
+  position: relative;
 }
 
 .code-editor .cm-editor {
@@ -28,4 +29,40 @@
   100% {
     background-color: rgba(255, 200, 0, 0);
   }
+}
+
+/* Context Menu Styles */
+.context-menu {
+  position: absolute;
+  z-index: 1000;
+  background-color: #252526;
+  border: 1px solid #454545;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  padding: 4px 0;
+  min-width: 180px;
+}
+
+.context-menu button {
+  display: block;
+  width: 100%;
+  padding: 6px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #cccccc;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  cursor: pointer;
+}
+
+.context-menu button:hover {
+  background-color: #094771;
+  color: #ffffff;
+}
+
+.context-menu-divider {
+  height: 1px;
+  background-color: #454545;
+  margin: 4px 0;
 }

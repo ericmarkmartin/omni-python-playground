@@ -216,7 +216,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/autocomplete@npm:^6.0.0, @codemirror/autocomplete@npm:^6.3.2":
+"@codemirror/autocomplete@npm:^6.0.0, @codemirror/autocomplete@npm:^6.20.0, @codemirror/autocomplete@npm:^6.3.2":
   version: 6.20.0
   resolution: "@codemirror/autocomplete@npm:6.20.0"
   dependencies:
@@ -253,7 +253,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/language@npm:^6.0.0, @codemirror/language@npm:^6.8.0":
+"@codemirror/language@npm:^6.0.0, @codemirror/language@npm:^6.11.0, @codemirror/language@npm:^6.8.0":
   version: 6.12.1
   resolution: "@codemirror/language@npm:6.12.1"
   dependencies:
@@ -267,7 +267,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/lint@npm:^6.0.0":
+"@codemirror/lint@npm:^6.0.0, @codemirror/lint@npm:^6.8.5":
   version: 6.9.2
   resolution: "@codemirror/lint@npm:6.9.2"
   dependencies:
@@ -275,6 +275,22 @@ __metadata:
     "@codemirror/view": "npm:^6.35.0"
     crelt: "npm:^1.0.5"
   checksum: 10c0/f938391b6d216784d3196e9494c7d492d5524109fa36566708fba73f48e69d5d18332f7e9993f472eb34fe4271727b5636b6390abb804cae7ef70120427fece2
+  languageName: node
+  linkType: hard
+
+"@codemirror/lsp-client@npm:^6.2.1":
+  version: 6.2.1
+  resolution: "@codemirror/lsp-client@npm:6.2.1"
+  dependencies:
+    "@codemirror/autocomplete": "npm:^6.20.0"
+    "@codemirror/language": "npm:^6.11.0"
+    "@codemirror/lint": "npm:^6.8.5"
+    "@codemirror/state": "npm:^6.5.2"
+    "@codemirror/view": "npm:^6.37.0"
+    "@lezer/highlight": "npm:^1.2.1"
+    marked: "npm:^15.0.12"
+    vscode-languageserver-protocol: "npm:^3.17.5"
+  checksum: 10c0/1e05cc5458d43d5f6ae669b8a21b4d0234428df3f99680c00e97a1aad81bf67553a1b431237b8927f687f21ae01ff79e6bd72e3202a38a4f7f2ef9b94aa97aee
   languageName: node
   linkType: hard
 
@@ -289,7 +305,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/state@npm:^6.0.0, @codemirror/state@npm:^6.1.1, @codemirror/state@npm:^6.4.0, @codemirror/state@npm:^6.5.0, @codemirror/state@npm:^6.5.3":
+"@codemirror/state@npm:^6.0.0, @codemirror/state@npm:^6.1.1, @codemirror/state@npm:^6.4.0, @codemirror/state@npm:^6.5.0, @codemirror/state@npm:^6.5.2, @codemirror/state@npm:^6.5.3":
   version: 6.5.3
   resolution: "@codemirror/state@npm:6.5.3"
   dependencies:
@@ -310,7 +326,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/view@npm:^6.0.0, @codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.27.0, @codemirror/view@npm:^6.35.0, @codemirror/view@npm:^6.39.7":
+"@codemirror/view@npm:^6.0.0, @codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.27.0, @codemirror/view@npm:^6.35.0, @codemirror/view@npm:^6.37.0, @codemirror/view@npm:^6.39.7":
   version: 6.39.7
   resolution: "@codemirror/view@npm:6.39.7"
   dependencies:
@@ -699,7 +715,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lezer/highlight@npm:^1.0.0":
+"@lezer/highlight@npm:^1.0.0, @lezer/highlight@npm:^1.2.1":
   version: 1.2.3
   resolution: "@lezer/highlight@npm:1.2.3"
   dependencies:
@@ -991,7 +1007,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19.2.5":
+"@types/react@npm:^19.2.7":
   version: 19.2.7
   resolution: "@types/react@npm:19.2.7"
   dependencies:
@@ -2124,6 +2140,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"marked@npm:^15.0.12":
+  version: 15.0.12
+  resolution: "marked@npm:15.0.12"
+  bin:
+    marked: bin/marked.js
+  checksum: 10c0/e09da211544b787ecfb25fed07af206060bf7cd6d9de6cb123f15c496a57f83b7aabea93340aaa94dae9c94e097ae129377cad6310abc16009590972e85f4212
+  languageName: node
+  linkType: hard
+
 "minimatch@npm:^10.1.1":
   version: 10.1.1
   resolution: "minimatch@npm:10.1.1"
@@ -2300,11 +2325,12 @@ __metadata:
   resolution: "omni-python-playground@workspace:."
   dependencies:
     "@codemirror/lang-python": "npm:^6.1.6"
+    "@codemirror/lsp-client": "npm:^6.2.1"
     "@codemirror/state": "npm:^6.5.3"
     "@codemirror/view": "npm:^6.39.7"
     "@eslint/js": "npm:^9.39.1"
     "@types/node": "npm:^24.10.1"
-    "@types/react": "npm:^19.2.5"
+    "@types/react": "npm:^19.2.7"
     "@types/react-dom": "npm:^19.2.3"
     "@uiw/react-codemirror": "npm:^4.23.0"
     "@vitejs/plugin-react": "npm:^5.1.1"
@@ -2318,6 +2344,9 @@ __metadata:
     typescript: "npm:~5.9.3"
     typescript-eslint: "npm:^8.46.4"
     vite: "npm:^7.2.4"
+  dependenciesMeta:
+    "@codemirror/lsp-client@6.2.1":
+      unplugged: true
   languageName: unknown
   linkType: soft
 
@@ -2718,8 +2747,8 @@ __metadata:
 
 "ty_wasm@file:ty_wasm::locator=omni-python-playground%40workspace%3A.":
   version: 0.0.0
-  resolution: "ty_wasm@file:ty_wasm#ty_wasm::hash=55525f&locator=omni-python-playground%40workspace%3A."
-  checksum: 10c0/ce952261941e4a3f02bc6218d261802b00eccf594b79b78ed5dd7b60d0be85dc0e12ebee06a3fea6f7e92064d1e2c021e8af1e4a868feba2c2090a4133ddcb6a
+  resolution: "ty_wasm@file:ty_wasm#ty_wasm::hash=89db45&locator=omni-python-playground%40workspace%3A."
+  checksum: 10c0/347e8903d7db3431018a7bcf5269c5368be2b9ce9d4a1f71761ba8af30280b6ec503039908a05a77ff25951b49933eb4baad642cc9371c54e78a90e6406f7d65
   languageName: node
   linkType: hard
 
@@ -2867,6 +2896,30 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: 10c0/0457c196cdd5761ec351c0f353945430fbad330e615b9eeab729c8ae163334f18acdc1d9cd7d9d673dbf111f07f6e4f0b25d4ac32360e65b4a6df9991046f3ff
+  languageName: node
+  linkType: hard
+
+"vscode-jsonrpc@npm:8.2.0":
+  version: 8.2.0
+  resolution: "vscode-jsonrpc@npm:8.2.0"
+  checksum: 10c0/0789c227057a844f5ead55c84679206227a639b9fb76e881185053abc4e9848aa487245966cc2393fcb342c4541241b015a1a2559fddd20ac1e68945c95344e6
+  languageName: node
+  linkType: hard
+
+"vscode-languageserver-protocol@npm:^3.17.5":
+  version: 3.17.5
+  resolution: "vscode-languageserver-protocol@npm:3.17.5"
+  dependencies:
+    vscode-jsonrpc: "npm:8.2.0"
+    vscode-languageserver-types: "npm:3.17.5"
+  checksum: 10c0/5f38fd80da9868d706eaa4a025f4aff9c3faad34646bcde1426f915cbd8d7e8b6c3755ce3fef6eebd256ba3145426af1085305f8a76e34276d2e95aaf339a90b
+  languageName: node
+  linkType: hard
+
+"vscode-languageserver-types@npm:3.17.5":
+  version: 3.17.5
+  resolution: "vscode-languageserver-types@npm:3.17.5"
+  checksum: 10c0/1e1260de79a2cc8de3e46f2e0182cdc94a7eddab487db5a3bd4ee716f67728e685852707d72c059721ce500447be9a46764a04f0611e94e4321ffa088eef36f8
   languageName: node
   linkType: hard
 

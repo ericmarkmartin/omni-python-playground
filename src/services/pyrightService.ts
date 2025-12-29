@@ -11,8 +11,8 @@ export async function checkWithPyright(
   console.log('Code:', code)
 
   return [{
-    line: 1,
-    column: 1,
+    start: { line: 1, column: 1 },
+    end: { line: 1, column: 1 },
     message: 'Pyright integration not yet implemented (will use server-side approach)',
     severity: 'info',
     source: 'Pyright'
