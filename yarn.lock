@@ -2295,6 +2295,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"omni-python-playground@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "omni-python-playground@workspace:."
+  dependencies:
+    "@codemirror/lang-python": "npm:^6.1.6"
+    "@codemirror/state": "npm:^6.5.3"
+    "@codemirror/view": "npm:^6.39.7"
+    "@eslint/js": "npm:^9.39.1"
+    "@types/node": "npm:^24.10.1"
+    "@types/react": "npm:^19.2.5"
+    "@types/react-dom": "npm:^19.2.3"
+    "@uiw/react-codemirror": "npm:^4.23.0"
+    "@vitejs/plugin-react": "npm:^5.1.1"
+    eslint: "npm:^9.39.1"
+    eslint-plugin-react-hooks: "npm:^7.0.1"
+    eslint-plugin-react-refresh: "npm:^0.4.24"
+    globals: "npm:^16.5.0"
+    react: "npm:^19.2.0"
+    react-dom: "npm:^19.2.0"
+    ty_wasm: "file:ty_wasm"
+    typescript: "npm:~5.9.3"
+    typescript-eslint: "npm:^8.46.4"
+    vite: "npm:^7.2.4"
+  languageName: unknown
+  linkType: soft
+
 "optionator@npm:^0.9.3":
   version: 0.9.4
   resolution: "optionator@npm:0.9.4"
@@ -2422,32 +2448,6 @@ __metadata:
   checksum: 10c0/14f76a8206bc3464f794fb2e3d3cc665ae416c01893ad7a02b23766eb07159144ee612ad67af5e84fa4479ccfe67678c4feb126b0485651b302babf66f04f9e9
   languageName: node
   linkType: hard
-
-"pytycmp@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "pytycmp@workspace:."
-  dependencies:
-    "@codemirror/lang-python": "npm:^6.1.6"
-    "@codemirror/state": "npm:^6.5.3"
-    "@codemirror/view": "npm:^6.39.7"
-    "@eslint/js": "npm:^9.39.1"
-    "@types/node": "npm:^24.10.1"
-    "@types/react": "npm:^19.2.5"
-    "@types/react-dom": "npm:^19.2.3"
-    "@uiw/react-codemirror": "npm:^4.23.0"
-    "@vitejs/plugin-react": "npm:^5.1.1"
-    eslint: "npm:^9.39.1"
-    eslint-plugin-react-hooks: "npm:^7.0.1"
-    eslint-plugin-react-refresh: "npm:^0.4.24"
-    globals: "npm:^16.5.0"
-    react: "npm:^19.2.0"
-    react-dom: "npm:^19.2.0"
-    ty_wasm: "file:ty_wasm"
-    typescript: "npm:~5.9.3"
-    typescript-eslint: "npm:^8.46.4"
-    vite: "npm:^7.2.4"
-  languageName: unknown
-  linkType: soft
 
 "react-dom@npm:^19.2.0":
   version: 19.2.3
@@ -2716,9 +2716,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ty_wasm@file:ty_wasm::locator=pytycmp%40workspace%3A.":
+"ty_wasm@file:ty_wasm::locator=omni-python-playground%40workspace%3A.":
   version: 0.0.0
-  resolution: "ty_wasm@file:ty_wasm#ty_wasm::hash=55525f&locator=pytycmp%40workspace%3A."
+  resolution: "ty_wasm@file:ty_wasm#ty_wasm::hash=55525f&locator=omni-python-playground%40workspace%3A."
   checksum: 10c0/ce952261941e4a3f02bc6218d261802b00eccf594b79b78ed5dd7b60d0be85dc0e12ebee06a3fea6f7e92064d1e2c021e8af1e4a868feba2c2090a4133ddcb6a
   languageName: node
   linkType: hard
