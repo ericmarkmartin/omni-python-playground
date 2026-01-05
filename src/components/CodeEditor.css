@@ -23,9 +23,11 @@
   0% {
     background-color: rgba(255, 200, 0, 0.5);
   }
+
   50% {
     background-color: rgba(255, 200, 0, 0.3);
   }
+
   100% {
     background-color: rgba(255, 200, 0, 0);
   }
@@ -65,4 +67,26 @@
   height: 1px;
   background-color: #454545;
   margin: 4px 0;
+}
+
+/* Standard CodeMirror Lint Styles - Force Visibility */
+.cm-lintRange-error,
+.cm-lintRange-Error {
+  background-color: rgba(255, 0, 0, 0.2) !important;
+  border-bottom: 2px wavy #ff0000 !important;
+  text-decoration: none !important;
+}
+
+.cm-lintRange-warning,
+.cm-lintRange-Warning {
+  background-color: rgba(255, 165, 0, 0.2) !important;
+  border-bottom: 2px wavy #ffa500 !important;
+  text-decoration: none !important;
+}
+
+.cm-lintRange-info,
+.cm-lintRange-Info {
+  background-color: rgba(0, 255, 255, 0.2) !important;
+  border-bottom: 2px wavy #00ffff !important;
+  text-decoration: none !important;
 }

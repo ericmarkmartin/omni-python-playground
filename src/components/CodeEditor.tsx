@@ -9,6 +9,7 @@ import {
   jumpToTypeDefinition,
   findReferences
 } from '@codemirror/lsp-client'
+import { lintGutter, linter } from '@codemirror/lint'
 import './CodeEditor.css'
 
 interface CodeEditorProps {
@@ -109,12 +110,14 @@ const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(({ code, onChan
 
   // Create extensions array with LSP support if client is available
   const extensions = useMemo(() => {
-    const exts = [python(), highlightField]
+    // We provide a never-resolving promise as source to install the lint UI
+    // but prevent the polling linter from clearing diagnostics pushed by LSP.
+    const exts = [python(), highlightField, lintGutter(), linter(() => new Promise(() => { }))]
 
     if (lspClient) {
       // Create plugin for the main.py document
       // plugin() returns an Extension which can be an array
-      const lspExtensions = lspClient.plugin('file:///main.py', 'python') as any
+      const lspExtensions = lspClient.plugin('file:///workspace/main.py', 'python') as any
       exts.push(...lspExtensions)
     }
 

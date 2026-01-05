@@ -5,6 +5,7 @@ import DiagnosticsPanel from './components/DiagnosticsPanel'
 import Controls from './components/Controls'
 import { runTypeChecker } from './services/typecheckerService'
 import { createTyLSPClient, closeTyLSPClient } from './services/lsp/tyLSPService'
+import { createBasedPyrightLSPClient, closeBasedPyrightLSPClient } from './services/lsp/basedPyrightLSPService'
 import type { LSPClient } from '@codemirror/lsp-client'
 
 export type TypeChecker = 'pyright' | 'basedpyright' | 'ty' | 'pyrefly'
@@ -40,36 +41,69 @@ function App() {
   const [lspClient, setLspClient] = useState<LSPClient | null>(null)
   const editorRef = useRef<CodeEditorHandle>(null)
 
-  // Initialize LSP client for ty
+  // Initialize LSP client based on selected type checker
   useEffect(() => {
-    if (typeChecker === 'ty') {
-      let cancelled = false
+    let cancelled = false
 
-      const initLSP = async () => {
-        try {
-          const client = await createTyLSPClient({
-            pythonVersion,
-            documentUri: 'file:///main.py'
-          })
+    const initLSP = async () => {
+      try {
+        let client: LSPClient | null = null
 
-          if (!cancelled) {
-            setLspClient(client)
-          }
-        } catch (error) {
-          console.error('Failed to initialize LSP client:', error)
+        const onDiagnostics = (params: any[]) => {
+          // Convert LSP diagnostics to our Diagnostic format
+          const appDiagnostics: Diagnostic[] = params.map((diag: any) => ({
+            start: {
+              line: diag.range.start.line + 1,
+              column: diag.range.start.character + 1
+            },
+            end: {
+              line: diag.range.end.line + 1,
+              column: diag.range.end.character + 1
+            },
+            message: diag.message,
+            severity: diag.severity === 1 ? 'error' : diag.severity === 2 ? 'warning' : 'info',
+            source: typeChecker
+          }))
+          setDiagnostics(appDiagnostics)
+          setIsChecking(false)
         }
-      }
 
+        if (typeChecker === 'ty') {
+          client = await createTyLSPClient({
+            pythonVersion,
+            documentUri: 'file:///main.py',
+            onDiagnostics
+          })
+        } else if (typeChecker === 'basedpyright') {
+          client = await createBasedPyrightLSPClient({
+            pythonVersion,
+            onDiagnostics
+          })
+        }
+
+        if (!cancelled && client) {
+          setLspClient(client)
+        }
+      } catch (error) {
+        console.error('Failed to initialize LSP client:', error)
+      }
+    }
+
+    // Close any existing clients first
+    const cleanup = () => {
+      cancelled = true
+      closeTyLSPClient()
+      closeBasedPyrightLSPClient()
+      setLspClient(null)
+    }
+
+    if (typeChecker === 'ty' || typeChecker === 'basedpyright') {
       initLSP()
-
-      return () => {
-        cancelled = true
-        closeTyLSPClient()
-        setLspClient(null)
-      }
+      return cleanup
     } else {
       // For other type checkers, no LSP client yet
       setLspClient(null)
+      return undefined
     }
   }, [typeChecker, pythonVersion])
 
@@ -78,6 +112,11 @@ function App() {
     let cancelled = false
 
     const checkCode = async () => {
+      // For LSP-based checkers, diagnostics are handled via events
+      if (typeChecker === 'ty' || typeChecker === 'basedpyright') {
+        return
+      }
+
       setIsChecking(true)
       try {
         const results = await runTypeChecker(typeChecker, code, pythonVersion)

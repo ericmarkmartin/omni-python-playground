@@ -131,6 +131,41 @@ function tyLocationLinkToLSPLocation(loc: TyLocationLink): { uri: string; range:
 }
 
 /**
+ * Get LSP diagnostics for a file handle
+ */
+function getDiagnostics(handle: FileHandle): any[] {
+  if (!workspace) return []
+
+  const diagnostics = workspace.checkFile(handle)
+  return diagnostics.map((diag: TyDiagnostic) => {
+    const range = diag.toRange(workspace!)
+    const severity = diag.severity()
+
+    return {
+      range: range ? tyToLSPRange(range) : { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
+      severity: severity === 2 ? 1 : severity === 1 ? 2 : 3, // ty: Error=2, Warning=1, Info=0 -> LSP: Error=1, Warning=2, Info=3
+      message: diag.message(),
+      source: 'ty'
+    }
+  })
+}
+
+/**
+ * Publish diagnostics for a file
+ */
+function publishDiagnostics(uri: string) {
+  const handle = fileHandles.get(uri)
+  if (!workspace || !handle) return
+
+  const lspDiagnostics = getDiagnostics(handle)
+
+  sendNotification('textDocument/publishDiagnostics', {
+    uri,
+    diagnostics: lspDiagnostics
+  })
+}
+
+/**
  * Send a response back to the main thread
  */
 function sendResponse(id: number | string | undefined, result: any) {
@@ -231,6 +266,8 @@ async function handleRequest(request: LSPRequest) {
         if (workspace) {
           const handle = workspace.openFile(doc.uri, doc.text)
           fileHandles.set(doc.uri, handle)
+          // Publish diagnostics immediately on open
+          publishDiagnostics(doc.uri)
         }
         break
       }
@@ -244,6 +281,9 @@ async function handleRequest(request: LSPRequest) {
           // Full document sync
           const newText = changes[0].text
           workspace.updateFile(handle, newText)
+
+          // Publish diagnostics on change
+          publishDiagnostics(uri)
         }
         break
       }
@@ -268,19 +308,7 @@ async function handleRequest(request: LSPRequest) {
           break
         }
 
-        const diagnostics = workspace.checkFile(handle)
-        const lspDiagnostics = diagnostics.map((diag: TyDiagnostic) => {
-          const range = diag.toRange(workspace!)
-          const severity = diag.severity()
-
-          return {
-            range: range ? tyToLSPRange(range) : { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
-            severity: severity === 2 ? 1 : severity === 1 ? 2 : 3, // ty: Error=2, Warning=1, Info=0 -> LSP: Error=1, Warning=2, Info=3
-            message: diag.message(),
-            source: 'ty'
-          }
-        })
-
+        const lspDiagnostics = getDiagnostics(handle)
         sendResponse(id, { kind: 'full', items: lspDiagnostics })
         break
       }

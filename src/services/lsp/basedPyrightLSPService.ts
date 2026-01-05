@@ -1,18 +1,19 @@
 /**
- * ty LSP Service
+ * BasedPyright LSP Service
  *
- * Creates and manages the LSP client connection to the ty worker.
+ * Creates and manages the LSP client connection to basedpyright running in a web worker.
+ * The worker is loaded from the browser-basedpyright package.
  */
 
 import { LSPClient, languageServerExtensions } from '@codemirror/lsp-client'
-import { WebWorkerTransport } from './WebWorkerTransport'
+import { BasedPyrightTransport } from './BasedPyrightTransport'
 import type { PythonVersion } from '../../App'
 
 let client: LSPClient | null = null
-let transport: WebWorkerTransport | null = null
+let transport: BasedPyrightTransport | null = null
 let currentPythonVersion: PythonVersion = '3.12'
 
-export interface TyLSPOptions {
+export interface BasedPyrightLSPOptions {
   pythonVersion?: PythonVersion
   documentUri?: string
   rootUri?: string
@@ -20,12 +21,12 @@ export interface TyLSPOptions {
 }
 
 /**
- * Create and initialize a ty LSP client
+ * Create and initialize a basedpyright LSP client
  */
-export async function createTyLSPClient(options: TyLSPOptions = {}): Promise<LSPClient> {
+export async function createBasedPyrightLSPClient(options: BasedPyrightLSPOptions = {}): Promise<LSPClient> {
   const {
     pythonVersion = '3.12',
-    rootUri = 'file:///',
+    rootUri = 'file:///workspace',
     onDiagnostics
   } = options
 
@@ -42,22 +43,22 @@ export async function createTyLSPClient(options: TyLSPOptions = {}): Promise<LSP
   currentPythonVersion = pythonVersion
 
   // Create the LSP client with all language server extensions
+  // Note: initializationOptions are injected by the transport when intercepting the initialize request
   const newClient = new LSPClient({
     rootUri,
     workspace: undefined,
-    timeout: 10000, // 10 seconds timeout
+    timeout: 30000, // 30 seconds timeout - basedpyright can be slow to initialize
     extensions: languageServerExtensions()
   })
 
-  // Create worker transport
-  const newTransport = new WebWorkerTransport({
-    worker: new URL('../../workers/tyWorker.ts', import.meta.url),
-    workerOptions: { type: 'module' },
+  // Create transport for basedpyright worker
+  const newTransport = new BasedPyrightTransport({
+    pythonVersion,
     onError: (error) => {
-      console.error('[LSP] ty worker error:', error)
+      console.error('[LSP] basedpyright worker error:', error)
     },
     onClose: () => {
-      console.log('[LSP] ty worker connection closed')
+      console.log('[LSP] basedpyright worker connection closed')
     }
   })
 
@@ -75,6 +76,9 @@ export async function createTyLSPClient(options: TyLSPOptions = {}): Promise<LSP
     })
   }
 
+  // Wait for the transport to be ready (worker booted)
+  await newTransport.ready
+
   // Connect the client to the transport and wait for initialization
   newClient.connect(newTransport)
   await newClient.initializing
@@ -89,32 +93,31 @@ export async function createTyLSPClient(options: TyLSPOptions = {}): Promise<LSP
 /**
  * Get the current LSP client instance
  */
-export function getTyLSPClient(): LSPClient | null {
+export function getBasedPyrightLSPClient(): LSPClient | null {
   return client
 }
 
 /**
  * Update the Python version for the LSP server
  */
-export async function updatePythonVersion(version: PythonVersion): Promise<void> {
+export async function updateBasedPyrightPythonVersion(version: PythonVersion): Promise<void> {
   if (currentPythonVersion === version) {
     return
   }
 
   currentPythonVersion = version
 
-  // For now, we need to recreate the client with the new Python version
-  // A future optimization could add a custom LSP method to update the version
+  // Recreate the client with the new Python version
   if (client) {
-    await closeTyLSPClient()
-    await createTyLSPClient({ pythonVersion: version })
+    await closeBasedPyrightLSPClient()
+    await createBasedPyrightLSPClient({ pythonVersion: version })
   }
 }
 
 /**
  * Close the LSP client and cleanup
  */
-export async function closeTyLSPClient(): Promise<void> {
+export async function closeBasedPyrightLSPClient(): Promise<void> {
   if (client) {
     client.disconnect()
     client = null
